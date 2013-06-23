@@ -61,6 +61,15 @@
   |    ],
   |    baz = 5;")
 
+;; (js2-deftest-indent multiline-decl-second-arg-value-parenthesised-indent-all
+;;   "var foo = 1,
+;;   |    bar = [
+;;   |  1, 2,
+;;   |  3, 4
+;;   |],
+;;   |    baz = 5;"
+;;   :bind ((js2-pretty-multiline-declarations 'all)))
+
 (js2-deftest-indent multiline-decl-first-arg-function-normal
   "var foo = function() {
   |  return 7;
@@ -73,3 +82,35 @@
   |    },
   |    bar = 8;"
   :bind ((js2-pretty-multiline-declarations 'all)))
+
+(js2-deftest-indent multiline-decl-first-arg-function-normal-a
+  "define(1, 2, [
+  |  3,
+  |  4
+  |]);")
+
+;; (js2-deftest-indent multiline-decl-first-arg-function-normal-aa
+;;   "define(1, 2,
+;;   |       [
+;;   |  3,
+;;   |  4
+;;   |]);")
+
+(js2-deftest-indent multiline-decl-first-arg-function-normal-ii
+  "define(1, 2, function(a, b) {
+  |  return 7;
+  |});")
+
+(js2-deftest-indent multiline-decl-first-arg-function-normal-iii
+  "define(1, 2,
+  |       function(a, b) {
+  |  return 7;
+  |});")
+
+(js2-deftest-indent multiline-decl-no-indent-in-switch
+  "switch(x) {
+  |case 42:
+  |  break;
+  |default:
+  |  something();
+  |});")

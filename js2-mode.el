@@ -9735,6 +9735,25 @@ In particular, return the buffer position of the first `for' kwd."
       (goto-char for-kwd)
       (current-column))))
 
+(defun js2-indent-in-function (parse-status)
+  "Return non-nil if we think we're in a function body.
+In particular, return the buffer position of the `function' kwd."
+  (let ((bracket (nth 1 parse-status)))
+    (when bracket
+      (save-excursion
+        (goto-char bracket)
+        (when (looking-at "[{]")
+          (js2-backward-sws)
+; awkward
+          (backward-char 1)
+          (when (looking-at ")")
+            (forward-char 1)
+            (backward-sexp)
+; FIXME: there might be a name too?
+            (backward-sexp)
+            (when (looking-at "function")
+              (point))))))))
+
 (defun js2-proper-indentation (parse-status)
   "Return the proper indentation for the current line."
   (save-excursion
@@ -9764,6 +9783,28 @@ In particular, return the buffer position of the first `for' kwd."
 
        (declaration-indent)
 
+;;        ((and bracket
+;;              (setq beg (js2-indent-in-function parse-status))
+;;              ;; (js2-indent-in-function parse-status)
+;; ; TODO: iff function in a list? or just a calling context?
+;;              (save-excursion
+;;                (goto-char beg)
+;;                (previous-line)
+;;                (end-of-line)
+;;                (previous-char)
+;;                (looking-at ",")))
+;;              ;; t)
+;;         ;; 1)
+;;         (goto-char bracket)
+;;         (backward-up-list)
+;;         (back-to-indentation)
+;;         (cond (same-indent-p
+;;                (current-column))
+;;               (continued-expr-p
+;;                (+ (current-column) (* 2 js2-basic-offset)))
+;;               (t
+;;                (+ (current-column) js2-basic-offset))))
+
        (bracket
         (goto-char bracket)
         (cond
@@ -9771,6 +9812,16 @@ In particular, return the buffer position of the first `for' kwd."
           (when (save-excursion (skip-chars-backward " \t)")
                                 (looking-at ")"))
             (backward-list))
+            ;; (js2-beginning-of-defun))
+
+;; TODO: iff in a list of arguments...?
+          (when (and (js2-indent-in-function parse-status)
+                     (save-excursion
+                       (js2-backward-sws)
+                       (backward-char)
+                       (looking-at ",")))
+            (backward-up-list))
+
           (back-to-indentation)
           (and (eq js2-pretty-multiline-declarations 'all)
                (looking-at js2-declaration-keyword-re)
