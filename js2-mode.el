@@ -9964,6 +9964,12 @@ in reverse."
                       (setq pos (current-column))))
           (push pos positions)
 
+          ;; (Fourth + epsilon) likely point: same as fourth, first
+          ;; preceding code with less indentation than the immediately
+          ;; preceding code line, but adding the default indent.
+          (incf pos js2-basic-offset)
+          (push pos positions)
+
           ;; nesting-heuristic position, main by default
           (push (setq main-pos normal-col) positions)
 
