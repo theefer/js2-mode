@@ -107,6 +107,21 @@
   |  return 7;
   |});")
 
+;; (js2-deftest-indent multiline-decl-first-arg-function-normal-iiii
+;;   "define(
+;;   |  1,
+;;   |  2,
+;;   |  function(a, b) {
+;;   |    return 7;
+;;   |});")
+
+(js2-deftest-indent multiline-decl-first-arg-function-normal-iiii
+  "module('hello'
+  |       ['a', 'b',
+  |        function(a, b) {
+  |    return 7;
+  |});")
+
 (js2-deftest-indent multiline-decl-no-indent-in-switch
   "switch(x) {
   |case 42:
